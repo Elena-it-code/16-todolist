@@ -9,11 +9,34 @@ import TextField from "@mui/material/TextField"
 import { useAppSelector } from "common/hooks"
 import { getTheme } from "common/theme"
 import { selectThemeMode } from "../../../../app/appSelectors"
+import { Controller, SubmitHandler, useForm } from "react-hook-form"
+import s from "./Login.module.css"
+
+
+type Inputs = {
+  email: string
+  password: string
+  rememberMe: boolean
+}
 
 export const Login = () => {
   const themeMode = useAppSelector(selectThemeMode)
   const theme = getTheme(themeMode)
 
+  const {
+    control,
+    reset,
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<Inputs>({ defaultValues: { email: "", password: "", rememberMe: false } })
+  // defaultValues - задали значения по умолчанию Для rememberMe: false обязательно, чтобы скидывалось после reset()/зачистки
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    alert(JSON.stringify(data))
+    reset()
+  }
+  
   return (
     <Grid container justifyContent={"center"}>
       <Grid item justifyContent={"center"}>
@@ -38,14 +61,43 @@ export const Login = () => {
               <b>Password:</b> free
             </p>
           </FormLabel>
-          <FormGroup>
-            <TextField type={"email"} label="Email" margin="normal" />
-            <TextField type="password" label="Password" margin="normal" />
-            <FormControlLabel label={"Remember me"} control={<Checkbox />} />
-            <Button type={"submit"} variant={"contained"} color={"primary"}>
-              Login
-            </Button>
-          </FormGroup>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FormGroup>
+              <TextField label="Email" margin="normal"
+                         {...register("email", {
+                           required: "Email is required",
+                           pattern: {
+                             value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                             message: "Incorrect email address"
+                           }
+                         })} />
+              {/*если есть error.email тогда покажи errors.email.message*/}
+              {errors.email && <span className={s.errorMessage}>{errors.email.message}</span>}
+              <TextField type="password" label="Password" margin="normal" {...register("password")} />
+
+
+              <FormControlLabel
+                label={"Remember me"}
+                control={
+                  <Controller
+                    name="rememberMe"
+                    control={control}
+                    render={({ field: { value, ...rest } }) => <Checkbox {...rest} checked={value} />}
+                    /*2 вариант: явно прописать функцию onChange как в примере из документации*/
+                    /*render={({ field }) => (
+                      <Checkbox
+                        onChange={(e) => field.onChange(e.target.checked)}
+                        checked={field.value} />
+                    )}*/
+                  />
+                }
+              />
+
+              <Button type={"submit"} variant={"contained"} color={"primary"}>
+                Login
+              </Button>
+            </FormGroup>
+          </form>
         </FormControl>
       </Grid>
     </Grid>
