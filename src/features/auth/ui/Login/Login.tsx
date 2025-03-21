@@ -6,22 +6,35 @@ import FormGroup from "@mui/material/FormGroup"
 import FormLabel from "@mui/material/FormLabel"
 import Grid from "@mui/material/Grid"
 import TextField from "@mui/material/TextField"
-import { useAppSelector } from "common/hooks"
+import { useAppDispatch, useAppSelector } from "common/hooks"
 import { getTheme } from "common/theme"
 import { selectThemeMode } from "../../../../app/appSelectors"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import s from "./Login.module.css"
+import { LoginArgs } from "../../api/authApi.types"
+import { loginTC } from "../../model/auth-reducer"
+import { selectIsLoggedIn } from "../../model/authSelectors"
+import { useNavigate } from "react-router"
+import { Path } from "common/routing"
+import { useEffect } from "react"
 
-
-type Inputs = {
-  email: string
-  password: string
-  rememberMe: boolean
-}
 
 export const Login = () => {
   const themeMode = useAppSelector(selectThemeMode)
   const theme = getTheme(themeMode)
+  const dispatch = useAppDispatch()
+
+  const navigate = useNavigate()
+
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
+
+  // Редирект (навигацию) реализовали при помощи хука useNavigate из React Router
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate(Path.Main)
+    }
+  }, [isLoggedIn, navigate])
+
 
   const {
     control,
@@ -29,14 +42,24 @@ export const Login = () => {
     register,
     handleSubmit,
     formState: { errors }
-  } = useForm<Inputs>({ defaultValues: { email: "", password: "", rememberMe: false } })
+  } = useForm<LoginArgs>({
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false
+    }
+  })
   // defaultValues - задали значения по умолчанию Для rememberMe: false обязательно, чтобы скидывалось после reset()/зачистки
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    alert(JSON.stringify(data))
+  const onSubmit: SubmitHandler<LoginArgs> = (data) => {
+    dispatch(loginTC(data))
     reset()
   }
-  
+ // 2 ВАРИАНТ: Редирект (навигацию) реализовали при помощи компонента <Navigate /> из библиотеки React Router. Ранее он был. Сейчас не актуален, но работает
+ //  if (isLoggedIn) {
+ //    return <Navigate to={Path.Main} />
+ //  }
+
   return (
     <Grid container justifyContent={"center"}>
       <Grid item justifyContent={"center"}>
