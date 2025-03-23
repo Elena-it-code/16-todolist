@@ -1,6 +1,6 @@
 import { instance } from "common/instance"
 import { BaseResponse } from "common/types"
-import { LoginArgs } from "./authApi.types"
+import { LoginArgs, MeResponse } from "./authApi.types"
 
 export const authApi = {
   login(payload: LoginArgs) {
@@ -8,5 +8,8 @@ export const authApi = {
   },
   logout() {
     return instance.delete<BaseResponse>(`/auth/login`)
+  },
+  me() {
+    return instance.get<BaseResponse<MeResponse>>(`/auth/me`)
   }
 }
