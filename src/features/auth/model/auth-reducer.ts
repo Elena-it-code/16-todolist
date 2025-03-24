@@ -1,11 +1,9 @@
 import { setAppStatusAC } from "../../../app/app-reducer"
 import { AppDispatch } from "../../../app/store"
 import { LoginArgs } from "../api/authApi.types"
-import { tasksApi } from "../../todolists/api/tasksApi"
 import { ResultCode } from "common/enums"
 import { handleServerAppError } from "common/utils/handleServerAppError"
 import { handleServerNetworkError } from "common/utils/handleServerNetworkError"
-import { removeTaskAC } from "../../todolists/model/tasks-reducer"
 import { authApi } from "../api/authApi"
 
 type InitialStateType = typeof initialState
@@ -82,8 +80,8 @@ export const initializeTC = () => (dispatch: AppDispatch) => {
   authApi
     .me()
     .then((res) => {
-      debugger
       if (res.data.resultCode === ResultCode.Success) {
+        dispatch(setAppStatusAC("succeeded"))
         dispatch(setIsLoggedInAC(true))
       } else {
         handleServerAppError(res.data, dispatch)
