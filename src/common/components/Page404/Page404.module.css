@@ -10,3 +10,20 @@
     margin: 0;
     text-transform: uppercase;
 }
+
+.button {
+    color: white;
+    border: 1px solid #4C7AA1;
+    background: #4C7AA1;
+    width: 250px;
+    margin-top: 40px;
+    padding: 10px 15px; /*лучше добавить отступы*/
+    textDecoration: none; /*убираем подчеркивание ссылки*/
+}
+
+.button:hover {
+    /* Те же стили, что и у обычного состояния */
+    color: white;
+    border: 1px solid #4C7AA1;
+    background: #4C7AA1;
+}

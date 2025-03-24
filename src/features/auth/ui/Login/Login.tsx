@@ -55,10 +55,10 @@ export const Login = () => {
     dispatch(loginTC(data))
     reset()
   }
- // 2 ВАРИАНТ: Редирект (навигацию) реализовали при помощи компонента <Navigate /> из библиотеки React Router. Ранее он был. Сейчас не актуален, но работает
- //  if (isLoggedIn) {
- //    return <Navigate to={Path.Main} />
- //  }
+  // 2 ВАРИАНТ: Редирект (навигацию) реализовали при помощи компонента <Navigate /> из библиотеки React Router. Ранее он был. Сейчас не актуален, но работает
+  //  if (isLoggedIn) {
+  //    return <Navigate to={Path.Main} />
+  //  }
 
   return (
     <Grid container justifyContent={"center"}>
@@ -93,12 +93,23 @@ export const Login = () => {
                              value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                              message: "Incorrect email address"
                            }
-                         })} />
+                         })
+                         }
+              />
               {/*если есть error.email тогда покажи errors.email.message*/}
               {errors.email && <span className={s.errorMessage}>{errors.email.message}</span>}
-              <TextField type="password" label="Password" margin="normal" {...register("password")} />
-
-
+              <TextField type="password" label="Password" margin="normal"
+                         {...register("password", {
+                           required: "Password is required", // Проверка на пустое поле
+                           minLength: {  // Проверка на количество символов
+                             value: 3,
+                             message: "Password must be at least 3 characters"
+                           }
+                         })
+                         }
+              />
+              {/*если есть errors.password тогда покажи errors.password.message*/}
+              {errors.password && <span className={s.errorMessage}>{errors.password.message}</span>}
               <FormControlLabel
                 label={"Remember me"}
                 control={
