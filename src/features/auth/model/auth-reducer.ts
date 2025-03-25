@@ -5,6 +5,8 @@ import { ResultCode } from "common/enums"
 import { handleServerAppError } from "common/utils/handleServerAppError"
 import { handleServerNetworkError } from "common/utils/handleServerNetworkError"
 import { authApi } from "../api/authApi"
+import { clearTasksAC } from "../../todolists/model/tasks-reducer"
+import { clearTodolistsAC } from "../../todolists/model/todolists-reducer"
 
 type InitialStateType = typeof initialState
 
@@ -66,6 +68,9 @@ export const logoutTC = () => (dispatch: AppDispatch) => {
         dispatch(setAppStatusAC("succeeded"))
         dispatch(setIsLoggedInAC(false)) // меняем с true на false
         localStorage.removeItem("sn-token") // удаляем token
+        dispatch(clearTasksAC()) // зачищаем таски при logout
+        dispatch(clearTodolistsAC()) // зачищаем тудулисты при logout
+        console.log()
       } else {
         handleServerAppError(res.data, dispatch)
       }
